@@ -1,0 +1,7 @@
+*.db
+*.key
+*.pem
+id_*
+!*.pub
+.env
+*.bak
