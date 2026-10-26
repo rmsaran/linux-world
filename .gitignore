@@ -5,3 +5,8 @@ id_*
 !*.pub
 .env
 *.bak
+*~
+*.swp
+*.retry
+.vault_pass*
+
