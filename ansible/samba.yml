@@ -1,0 +1,57 @@
+- name: Configure Samba file server
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars:
+    shares_root: /home/serverux/shares
+    share_path: /home/serverux/shares/StorageServer
+
+  tasks:
+    - name: Install Samba, smbclient and htop
+      ansible.builtin.apt:
+        name:
+          - samba
+          - smbclient
+          - htop
+        state: present
+        cache_valid_time: 3600
+
+    - name: Make sure the shares parent folder exists
+      ansible.builtin.file:
+        path: "{{ shares_root }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Make sure the StorageServer folder exists
+      ansible.builtin.file:
+        path: "{{ share_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0777"
+
+    - name: Deploy smb.conf from template
+      ansible.builtin.template:
+        src: smb.conf.j2
+        dest: /etc/samba/smb.conf
+        owner: root
+        group: root
+        mode: "0644"
+        backup: true
+        validate: testparm -s %s
+      notify: Restart smbd
+
+    - name: Keep smbd enabled and running
+      ansible.builtin.systemd:
+        name: smbd
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart smbd
+      ansible.builtin.systemd:
+        name: smbd
+        state: restarted

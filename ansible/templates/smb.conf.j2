@@ -1,0 +1,49 @@
+# Managed by Ansible (serverlin-ansible/samba.yml). Manual edits will be overwritten.
+
+[global]
+   workgroup = WORKGROUP
+   disable netbios = yes
+   server string = %h server (Samba, Ubuntu)
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   logging = file
+   panic action = /usr/share/samba/panic-action %d
+   server role = standalone server
+   obey pam restrictions = yes
+   unix password sync = yes
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+   pam password change = yes
+   map to guest = bad user
+   usershare allow guests = yes
+
+[printers]
+   comment = All Printers
+   browseable = no
+   path = /var/tmp
+   printable = yes
+   guest ok = no
+   read only = yes
+   create mask = 0700
+
+[print$]
+   comment = Printer Drivers
+   path = /var/lib/samba/printers
+   browseable = yes
+   read only = yes
+   guest ok = no
+
+[StorageServer]
+   comment = My Cloud PVT
+   path = /home/serverux/shares/StorageServer
+   browseable = yes
+   read only = no
+   guest ok = no
+   create mask = 0777
+   directory mask = 0777
+   vfs objects = recycle
+   recycle:repository = .recycle/%U
+   recycle:keeptree = yes
+   recycle:versions = yes
+   recycle:touch = yes
+   recycle:excludedir = .recycle
