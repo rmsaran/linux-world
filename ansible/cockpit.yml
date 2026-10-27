@@ -1,0 +1,21 @@
+- name: Install and enable Cockpit
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install Cockpit and the modules in use
+      ansible.builtin.apt:
+        name:
+          - cockpit
+          - cockpit-networkmanager
+          - cockpit-packagekit
+          - cockpit-storaged
+        state: present
+        cache_valid_time: 3600
+
+    - name: Keep the Cockpit socket enabled and listening
+      ansible.builtin.systemd:
+        name: cockpit.socket
+        enabled: true
+        state: started
