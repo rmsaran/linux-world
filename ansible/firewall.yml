@@ -1,0 +1,55 @@
+- name: Configure the UFW firewall
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars:
+    lan_cidr: 192.168.1.0/24
+
+  tasks:
+    - name: Install ufw
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+        cache_valid_time: 3600
+
+    - name: Default policy, deny incoming
+      community.general.ufw:
+        default: deny
+        direction: incoming
+
+    - name: Default policy, allow outgoing
+      community.general.ufw:
+        default: allow
+        direction: outgoing
+
+    - name: Logging off
+      community.general.ufw:
+        logging: "off"
+
+    # Everything arriving over Tailscale
+    - name: Allow all traffic on tailscale0
+      community.general.ufw:
+        rule: allow
+        direction: in
+        interface: tailscale0
+
+    # SSH, 139, Samba (445), Cockpit (9090) from the home LAN only
+    - name: Allow SSH, Samba and Cockpit from the LAN
+      community.general.ufw:
+        rule: allow
+        from_ip: "{{ lan_cidr }}"
+        to_port: "22,139,445,9090"
+        proto: tcp
+
+    # Filebrowser (hand-built service, LAN only)
+    - name: Allow Filebrowser from the LAN
+      community.general.ufw:
+        rule: allow
+        from_ip: "{{ lan_cidr }}"
+        to_port: "8080"
+        proto: tcp
+
+    - name: Enable the firewall
+      community.general.ufw:
+        state: enabled
