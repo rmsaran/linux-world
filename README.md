@@ -1,3 +1,7 @@
+# linux-world
+
+Hands-on Linux playground: a home storage server (serverlin) rebuilt from code with Ansible.
+
 ## Rebuilding serverlin
 
 1. Install Ubuntu Server 26.04 LTS by hand, create user `serverux`, enable OpenSSH.
