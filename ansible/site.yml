@@ -1,5 +1,6 @@
 - import_playbook: quiet-console.yml
 - import_playbook: cockpit.yml
+- import_playbook: ssh-keys.yml
 - import_playbook: samba.yml
 - import_playbook: tailscale.yml
 - import_playbook: firewall.yml

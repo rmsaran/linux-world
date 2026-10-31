@@ -1,0 +1,24 @@
+---
+- name: Manage authorized SSH public keys
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars:
+    ssh_user: serverux
+
+  tasks:
+    - name: Make sure the .ssh folder exists
+      ansible.builtin.file:
+        path: "/home/{{ ssh_user }}/.ssh"
+        state: directory
+        owner: "{{ ssh_user }}"
+        group: "{{ ssh_user }}"
+        mode: "0700"
+
+    - name: Add the public keys from the repo
+      ansible.posix.authorized_key:
+        user: "{{ ssh_user }}"
+        state: present
+        key: "{{ lookup('file', 'files/authorized_keys') }}"
+        exclusive: false
